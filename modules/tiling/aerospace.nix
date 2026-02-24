@@ -11,10 +11,14 @@ in
       description = "Enable AeroSpace tiling window manager";
     };
 
-    gaps.outer.top = lib.mkOption {
-      type = lib.types.int;
-      default = 38;
-      description = "Top outer gap — increase to make room for SketchyBar";
+    gaps = {
+      outer = {
+        top = lib.mkOption {
+          type = lib.types.int;
+          default = 38;
+          description = "Top outer gap — increase to make room for SketchyBar";
+        };
+      };
     };
 
     extraSettings = lib.mkOption {
@@ -39,7 +43,7 @@ in
         };
 
         exec-on-workspace-change = [
-          "/bin/bash" "-c"
+          "${pkgs.bash}/bin/bash" "-c"
           "sketchybar --trigger aerospace_workspace_change AEROSP_FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE AEROSP_PREV_WORKSPACE=$AEROSPACE_PREV_WORKSPACE"
         ];
 
