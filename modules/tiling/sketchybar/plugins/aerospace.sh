@@ -8,7 +8,7 @@ if [ "$SENDER" = "aerospace_workspace_change" ]; then
     sketchybar --set "$NAME" \
       background.drawing=on \
       background.color=@ACCENT_COLOR@ \
-      icon.color=0xff1e1e2e \
+      icon.color=@FOCUSED_ICON_COLOR@ \
       icon.font="SF Pro:Bold:14.0"
   else
     sketchybar --set "$NAME" \
@@ -25,7 +25,7 @@ if [ "$AEROSP_FOCUSED_WORKSPACE" = "$WORKSPACE_ID" ]; then
   sketchybar --set "$NAME" \
     background.drawing=on \
     background.color=@ACCENT_COLOR@ \
-    icon.color=0xff1e1e2e \
+    icon.color=@FOCUSED_ICON_COLOR@ \
     icon.font="SF Pro:Bold:14.0"
 else
   sketchybar --set "$NAME" \
