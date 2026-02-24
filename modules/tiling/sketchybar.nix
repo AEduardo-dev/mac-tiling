@@ -16,6 +16,8 @@ let
         --replace-fail "@ICON_COLOR@" "${cfg.theme.iconColor}" \
         --replace-fail "@FOCUSED_ICON_COLOR@" "${cfg.theme.focusedIconColor}"
 
+      patchShebangs $out/sketchybarrc
+      patchShebangs $out/plugins
       chmod +x $out/plugins/*.sh
       chmod +x $out/sketchybarrc
 
