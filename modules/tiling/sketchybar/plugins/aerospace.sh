@@ -20,7 +20,8 @@ if [ "$SENDER" = "aerospace_workspace_change" ]; then
 fi
 
 # Initial state based on env vars from aerospace trigger
-if [ "$AEROSP_FOCUSED_WORKSPACE" = "$NAME" ]; then
+WORKSPACE_ID="${NAME#space.}"
+if [ "$AEROSP_FOCUSED_WORKSPACE" = "$WORKSPACE_ID" ]; then
   sketchybar --set "$NAME" \
     background.drawing=on \
     background.color=@ACCENT_COLOR@ \
