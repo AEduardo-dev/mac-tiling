@@ -23,7 +23,8 @@ let
 
       substituteInPlace $out/plugins/aerospace.sh \
         --replace-fail "@ACCENT_COLOR@" "${cfg.theme.accentColor}" \
-        --replace-fail "@ICON_COLOR@" "${cfg.theme.iconColor}"
+        --replace-fail "@ICON_COLOR@" "${cfg.theme.iconColor}" \
+        --replace-fail "@FOCUSED_ICON_COLOR@" "${cfg.theme.focusedIconColor}"
 
       chmod +x $out/plugins/*.sh
     '';
@@ -48,6 +49,7 @@ in
       iconColor = lib.mkOption { type = lib.types.strMatching "0x[0-9a-fA-F]{8}"; default = "0xffcdd6f4"; description = "Icon color (ARGB hex)"; };
       labelColor = lib.mkOption { type = lib.types.strMatching "0x[0-9a-fA-F]{8}"; default = "0xffcdd6f4"; description = "Label color (ARGB hex)"; };
       accentColor = lib.mkOption { type = lib.types.strMatching "0x[0-9a-fA-F]{8}"; default = "0xffcba6f7"; description = "Accent color for focused items (ARGB hex)"; };
+      focusedIconColor = lib.mkOption { type = lib.types.strMatching "0x[0-9a-fA-F]{8}"; default = "0xff1e1e2e"; description = "Icon color on the focused workspace badge (ARGB hex)"; };
       barHeight = lib.mkOption { type = lib.types.int; default = 32; description = "Bar height in pixels"; };
       barPosition = lib.mkOption { type = lib.types.enum [ "top" "bottom" ]; default = "top"; description = "Bar position (top or bottom)"; };
     };
