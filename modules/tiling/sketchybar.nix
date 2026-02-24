@@ -23,7 +23,6 @@ let
 
       substituteInPlace $out/plugins/aerospace.sh \
         --replace-fail "@ACCENT_COLOR@" "${cfg.theme.accentColor}" \
-        --replace-fail "@LABEL_COLOR@" "${cfg.theme.labelColor}" \
         --replace-fail "@ICON_COLOR@" "${cfg.theme.iconColor}"
 
       chmod +x $out/plugins/*.sh
@@ -52,6 +51,12 @@ in
       barHeight = lib.mkOption { type = lib.types.int; default = 32; description = "Bar height in pixels"; };
       barPosition = lib.mkOption { type = lib.types.enum [ "top" "bottom" ]; default = "top"; description = "Bar position (top or bottom)"; };
     };
+
+    hideMenuBar = lib.mkOption {
+      type = lib.types.bool;
+      default = true;
+      description = "Hide the native macOS menu bar when SketchyBar is enabled";
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -60,6 +65,6 @@ in
       config = builtins.readFile "${sketchybarConfigDir}/sketchybarrc";
     };
 
-    system.defaults.NSGlobalDomain._HIHideMenuBar = true;
+    system.defaults.NSGlobalDomain._HIHideMenuBar = lib.mkIf cfg.hideMenuBar true;
   };
 }

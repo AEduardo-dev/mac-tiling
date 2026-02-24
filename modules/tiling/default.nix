@@ -1,8 +1,5 @@
 { config, lib, pkgs, ... }:
 
-let
-  cfg = config.modules.tiling;
-in
 {
   imports = [
     ./aerospace.nix
