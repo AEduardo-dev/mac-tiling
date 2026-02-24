@@ -1,7 +1,8 @@
 #!/bin/bash
-PERCENTAGE="$(pmset -g batt | grep -Eo "[0-9]+%" | cut -d% -f1)"
+BATTERY_INFO="$(pmset -g batt)"
+PERCENTAGE="$(printf '%s\n' "$BATTERY_INFO" | grep -Eo "[0-9]+%" | cut -d% -f1)"
 PERCENTAGE="${PERCENTAGE:-0}"
-CHARGING="$(pmset -g batt | grep 'AC Power')"
+CHARGING="$(printf '%s\n' "$BATTERY_INFO" | grep 'AC Power')"
 
 if [ -n "$CHARGING" ]; then
   ICON="󰂄"
