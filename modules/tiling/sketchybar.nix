@@ -1,6 +1,9 @@
-{ config, lib, pkgs, ... }:
-
-let
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}: let
   cfg = config.modules.tiling.sketchybar;
 
   sketchybarConfigDir = pkgs.stdenv.mkDerivation {
@@ -27,9 +30,7 @@ let
       platforms = lib.platforms.darwin;
     };
   };
-
-in
-{
+in {
   options.modules.tiling.sketchybar = {
     enable = lib.mkOption {
       type = lib.types.bool;
@@ -38,14 +39,46 @@ in
     };
 
     theme = {
-      barColor = lib.mkOption { type = lib.types.strMatching "0x[0-9a-fA-F]{8}"; default = "0xff1e1e2e"; description = "Bar background color (ARGB hex)"; };
-      barBorderColor = lib.mkOption { type = lib.types.strMatching "0x[0-9a-fA-F]{8}"; default = "0xff313244"; description = "Bar border color (ARGB hex)"; };
-      iconColor = lib.mkOption { type = lib.types.strMatching "0x[0-9a-fA-F]{8}"; default = "0xffcdd6f4"; description = "Icon color (ARGB hex)"; };
-      labelColor = lib.mkOption { type = lib.types.strMatching "0x[0-9a-fA-F]{8}"; default = "0xffcdd6f4"; description = "Label color (ARGB hex)"; };
-      accentColor = lib.mkOption { type = lib.types.strMatching "0x[0-9a-fA-F]{8}"; default = "0xffcba6f7"; description = "Accent color for focused items (ARGB hex)"; };
-      focusedIconColor = lib.mkOption { type = lib.types.strMatching "0x[0-9a-fA-F]{8}"; default = "0xff1e1e2e"; description = "Icon color on the focused workspace badge (ARGB hex)"; };
-      barHeight = lib.mkOption { type = lib.types.int; default = 32; description = "Bar height in pixels"; };
-      barPosition = lib.mkOption { type = lib.types.enum [ "top" "bottom" ]; default = "top"; description = "Bar position (top or bottom)"; };
+      barColor = lib.mkOption {
+        type = lib.types.strMatching "0x[0-9a-fA-F]{8}";
+        default = "0xff1e1e2e";
+        description = "Bar background color (ARGB hex)";
+      };
+      barBorderColor = lib.mkOption {
+        type = lib.types.strMatching "0x[0-9a-fA-F]{8}";
+        default = "0xff313244";
+        description = "Bar border color (ARGB hex)";
+      };
+      iconColor = lib.mkOption {
+        type = lib.types.strMatching "0x[0-9a-fA-F]{8}";
+        default = "0xffcdd6f4";
+        description = "Icon color (ARGB hex)";
+      };
+      labelColor = lib.mkOption {
+        type = lib.types.strMatching "0x[0-9a-fA-F]{8}";
+        default = "0xffcdd6f4";
+        description = "Label color (ARGB hex)";
+      };
+      accentColor = lib.mkOption {
+        type = lib.types.strMatching "0x[0-9a-fA-F]{8}";
+        default = "0xffcba6f7";
+        description = "Accent color for focused items (ARGB hex)";
+      };
+      focusedIconColor = lib.mkOption {
+        type = lib.types.strMatching "0x[0-9a-fA-F]{8}";
+        default = "0xff1e1e2e";
+        description = "Icon color on the focused workspace badge (ARGB hex)";
+      };
+      barHeight = lib.mkOption {
+        type = lib.types.int;
+        default = 32;
+        description = "Bar height in pixels";
+      };
+      barPosition = lib.mkOption {
+        type = lib.types.enum ["top" "bottom"];
+        default = "top";
+        description = "Bar position (top or bottom)";
+      };
     };
 
     hideMenuBar = lib.mkOption {
@@ -58,32 +91,31 @@ in
   config = lib.mkIf cfg.enable {
     services.sketchybar = {
       enable = true;
-      config =
-        let
-          template = builtins.readFile ./sketchybar/sketchybarrc;
-        in
-          lib.replaceStrings
-            [
-              "@BAR_COLOR@"
-              "@BAR_BORDER_COLOR@"
-              "@ICON_COLOR@"
-              "@LABEL_COLOR@"
-              "@ACCENT_COLOR@"
-              "@BAR_HEIGHT@"
-              "@BAR_POSITION@"
-              "@PLUGIN_DIR@"
-            ]
-            [
-              cfg.theme.barColor
-              cfg.theme.barBorderColor
-              cfg.theme.iconColor
-              cfg.theme.labelColor
-              cfg.theme.accentColor
-              (toString cfg.theme.barHeight)
-              cfg.theme.barPosition
-              "${sketchybarConfigDir}/plugins"
-            ]
-            template;
+      config = let
+        template = builtins.readFile ./sketchybar/sketchybarrc;
+      in
+        lib.replaceStrings
+        [
+          "@BAR_COLOR@"
+          "@BAR_BORDER_COLOR@"
+          "@ICON_COLOR@"
+          "@LABEL_COLOR@"
+          "@ACCENT_COLOR@"
+          "@BAR_HEIGHT@"
+          "@BAR_POSITION@"
+          "@PLUGIN_DIR@"
+        ]
+        [
+          cfg.theme.barColor
+          cfg.theme.barBorderColor
+          cfg.theme.iconColor
+          cfg.theme.labelColor
+          cfg.theme.accentColor
+          (toString cfg.theme.barHeight)
+          cfg.theme.barPosition
+          "${sketchybarConfigDir}/plugins"
+        ]
+        template;
     };
 
     system.defaults.NSGlobalDomain._HIHideMenuBar = cfg.hideMenuBar;

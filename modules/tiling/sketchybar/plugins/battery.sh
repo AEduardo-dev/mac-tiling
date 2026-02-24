@@ -5,17 +5,17 @@ PERCENTAGE="${PERCENTAGE:-0}"
 CHARGING="$(printf '%s\n' "$BATTERY_INFO" | grep 'AC Power')"
 
 if [ -n "$CHARGING" ]; then
-  ICON="󰂄"
+    ICON="󰂄"
 elif [ "$PERCENTAGE" -gt 80 ]; then
-  ICON="󰁹"
+    ICON="󰁹"
 elif [ "$PERCENTAGE" -gt 60 ]; then
-  ICON="󰂀"
+    ICON="󰂀"
 elif [ "$PERCENTAGE" -gt 40 ]; then
-  ICON="󰁾"
+    ICON="󰁾"
 elif [ "$PERCENTAGE" -gt 20 ]; then
-  ICON="󰁼"
+    ICON="󰁼"
 else
-  ICON="󰁺"
+    ICON="󰁺"
 fi
 
 sketchybar --set "$NAME" icon="$ICON" label="${PERCENTAGE}%"
