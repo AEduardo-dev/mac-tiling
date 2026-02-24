@@ -67,6 +67,6 @@ in
       config = builtins.readFile "${sketchybarConfigDir}/sketchybarrc";
     };
 
-    system.defaults.NSGlobalDomain._HIHideMenuBar = lib.mkIf cfg.hideMenuBar true;
+    system.defaults.NSGlobalDomain._HIHideMenuBar = cfg.hideMenuBar;
   };
 }
