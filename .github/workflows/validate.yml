@@ -1,0 +1,64 @@
+name: Validate nix-darwin tiling module
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  # ── Tier 1: Linux — fast & cheap, runs on every push/PR ──────────────────
+  linux-checks:
+    name: Linux checks (flake, formatting, shellcheck)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v30
+        with:
+          nix_path: nixpkgs=channel:nixpkgs-unstable
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+
+      - name: nix flake check (structure & syntax)
+        run: nix flake check --no-build
+
+      - name: nix flake show (confirm module exports)
+        run: nix flake show
+
+      - name: Check Nix formatting with alejandra
+        run: nix run nixpkgs#alejandra -- --check .
+
+      - name: Shellcheck — plugin scripts
+        run: |
+          nix run nixpkgs#shellcheck -- \
+            modules/tiling/sketchybar/plugins/aerospace.sh \
+            modules/tiling/sketchybar/plugins/battery.sh \
+            modules/tiling/sketchybar/plugins/clock.sh \
+            modules/tiling/sketchybar/plugins/cpu.sh \
+            modules/tiling/sketchybar/plugins/front_app.sh \
+            modules/tiling/sketchybar/sketchybarrc
+
+  # ── Tier 2: macOS — full darwin evaluation ───────────────────────────────
+  macos-eval:
+    name: macOS darwin module evaluation
+    runs-on: macos-latest
+    if: github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v30
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+
+      - name: Evaluate darwin configuration (dry-run)
+        run: nix build .#checks.aarch64-darwin.eval --dry-run
