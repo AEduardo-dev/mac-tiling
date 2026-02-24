@@ -35,21 +35,25 @@ jobs:
       - name: Check Nix formatting with alejandra
         run: nix run nixpkgs#alejandra -- --check .
 
-      - name: Shellcheck — plugin scripts
+      - name: Shellcheck — shell scripts
         run: |
-          nix run nixpkgs#shellcheck -- \
-            modules/tiling/sketchybar/plugins/aerospace.sh \
-            modules/tiling/sketchybar/plugins/battery.sh \
-            modules/tiling/sketchybar/plugins/clock.sh \
-            modules/tiling/sketchybar/plugins/cpu.sh \
-            modules/tiling/sketchybar/plugins/front_app.sh \
-            modules/tiling/sketchybar/sketchybarrc
+          mapfile -t scripts < <(find . \
+            -not -path './.git/*' \
+            \( -name '*.sh' -o -name 'sketchybarrc' \) \
+            | sort)
+          if [ "${#scripts[@]}" -gt 0 ]; then
+            nix run nixpkgs#shellcheck -- "${scripts[@]}"
+          else
+            echo "No shell scripts found, skipping shellcheck."
+          fi
 
-  # ── Tier 2: macOS — full darwin evaluation ───────────────────────────────
+  # ── Tier 2: macOS — full darwin evaluation (enabled once modules land) ───
   macos-eval:
     name: macOS darwin module evaluation
     runs-on: macos-latest
-    if: github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main'
+    if: >
+      (github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main') &&
+      hashFiles('checks/eval-darwin.nix') != ''
     steps:
       - name: Checkout
         uses: actions/checkout@v4

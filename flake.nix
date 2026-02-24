@@ -7,22 +7,5 @@
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs =
-    { self, nixpkgs, nix-darwin, ... }:
-    let
-      forEachDarwinSystem = f: builtins.listToAttrs (map (system: { name = system; value = f system; }) [ "aarch64-darwin" "x86_64-darwin" ]);
-    in
-    {
-      darwinModules = {
-        tiling = import ./modules/tiling;
-        default = self.darwinModules.tiling;
-      };
-
-      checks = forEachDarwinSystem (system: {
-        eval = (import ./checks/eval-darwin.nix {
-          inherit nix-darwin nixpkgs system;
-          tilingModule = self.darwinModules.tiling;
-        }).system;
-      });
-    };
+  outputs = { self, nixpkgs, nix-darwin, ... }: { };
 }
