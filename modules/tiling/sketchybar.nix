@@ -11,22 +11,16 @@ let
       mkdir -p $out
       cp -r $src/* $out/
 
-      substituteInPlace $out/sketchybarrc \
-        --replace-fail "@BAR_COLOR@" "${cfg.theme.barColor}" \
-        --replace-fail "@BAR_BORDER_COLOR@" "${cfg.theme.barBorderColor}" \
-        --replace-fail "@ICON_COLOR@" "${cfg.theme.iconColor}" \
-        --replace-fail "@LABEL_COLOR@" "${cfg.theme.labelColor}" \
-        --replace-fail "@ACCENT_COLOR@" "${cfg.theme.accentColor}" \
-        --replace-fail "@BAR_HEIGHT@" "${toString cfg.theme.barHeight}" \
-        --replace-fail "@BAR_POSITION@" "${cfg.theme.barPosition}" \
-        --replace-fail "@PLUGIN_DIR@" "$out/plugins"
-
       substituteInPlace $out/plugins/aerospace.sh \
         --replace-fail "@ACCENT_COLOR@" "${cfg.theme.accentColor}" \
         --replace-fail "@ICON_COLOR@" "${cfg.theme.iconColor}" \
         --replace-fail "@FOCUSED_ICON_COLOR@" "${cfg.theme.focusedIconColor}"
 
       chmod +x $out/plugins/*.sh
+      chmod +x $out/sketchybarrc
+
+      patchShebangs $out/sketchybarrc
+      patchShebangs $out/plugins
     '';
     meta = {
       description = "SketchyBar configuration files";
