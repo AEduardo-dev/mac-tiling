@@ -6,6 +6,7 @@ let
   sketchybarConfigDir = pkgs.stdenv.mkDerivation {
     name = "sketchybar-config";
     src = ./sketchybar;
+    dontBuild = true;
     installPhase = ''
       mkdir -p $out
       cp -r $src/* $out/
@@ -27,6 +28,10 @@ let
 
       chmod +x $out/plugins/*.sh
     '';
+    meta = {
+      description = "SketchyBar configuration files";
+      platforms = lib.platforms.darwin;
+    };
   };
 
 in
@@ -39,13 +44,13 @@ in
     };
 
     theme = {
-      barColor = lib.mkOption { type = lib.types.str; default = "0xff1e1e2e"; description = "Bar background color (ARGB hex)"; };
-      barBorderColor = lib.mkOption { type = lib.types.str; default = "0xff313244"; description = "Bar border color (ARGB hex)"; };
-      iconColor = lib.mkOption { type = lib.types.str; default = "0xffcdd6f4"; description = "Icon color (ARGB hex)"; };
-      labelColor = lib.mkOption { type = lib.types.str; default = "0xffcdd6f4"; description = "Label color (ARGB hex)"; };
-      accentColor = lib.mkOption { type = lib.types.str; default = "0xffcba6f7"; description = "Accent color for focused items (ARGB hex)"; };
+      barColor = lib.mkOption { type = lib.types.strMatching "0x[0-9a-fA-F]{8}"; default = "0xff1e1e2e"; description = "Bar background color (ARGB hex)"; };
+      barBorderColor = lib.mkOption { type = lib.types.strMatching "0x[0-9a-fA-F]{8}"; default = "0xff313244"; description = "Bar border color (ARGB hex)"; };
+      iconColor = lib.mkOption { type = lib.types.strMatching "0x[0-9a-fA-F]{8}"; default = "0xffcdd6f4"; description = "Icon color (ARGB hex)"; };
+      labelColor = lib.mkOption { type = lib.types.strMatching "0x[0-9a-fA-F]{8}"; default = "0xffcdd6f4"; description = "Label color (ARGB hex)"; };
+      accentColor = lib.mkOption { type = lib.types.strMatching "0x[0-9a-fA-F]{8}"; default = "0xffcba6f7"; description = "Accent color for focused items (ARGB hex)"; };
       barHeight = lib.mkOption { type = lib.types.int; default = 32; description = "Bar height in pixels"; };
-      barPosition = lib.mkOption { type = lib.types.str; default = "top"; description = "Bar position (top or bottom)"; };
+      barPosition = lib.mkOption { type = lib.types.enum [ "top" "bottom" ]; default = "top"; description = "Bar position (top or bottom)"; };
     };
   };
 
