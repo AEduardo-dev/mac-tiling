@@ -47,7 +47,10 @@ Add this flake as an input in your `flake.nix`:
     enable = true;
 
     aerospace = {
-      gaps.outer.top = 40;
+      gaps = {
+        inner = { horizontal = 8; vertical = 8; };
+        outer = { top = 40; bottom = 8; left = 8; right = 8; };
+      };
       extraSettings = {
         # any extra aerospace.toml settings merged in
       };

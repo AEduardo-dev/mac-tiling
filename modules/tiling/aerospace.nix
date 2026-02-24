@@ -12,11 +12,38 @@ in
     };
 
     gaps = {
+      inner = {
+        horizontal = lib.mkOption {
+          type = lib.types.int;
+          default = 8;
+          description = "Inner horizontal gap between tiled windows";
+        };
+        vertical = lib.mkOption {
+          type = lib.types.int;
+          default = 8;
+          description = "Inner vertical gap between tiled windows";
+        };
+      };
       outer = {
         top = lib.mkOption {
           type = lib.types.int;
           default = 38;
           description = "Top outer gap — increase to make room for SketchyBar";
+        };
+        bottom = lib.mkOption {
+          type = lib.types.int;
+          default = 8;
+          description = "Bottom outer gap";
+        };
+        left = lib.mkOption {
+          type = lib.types.int;
+          default = 8;
+          description = "Left outer gap";
+        };
+        right = lib.mkOption {
+          type = lib.types.int;
+          default = 8;
+          description = "Right outer gap";
         };
       };
     };
@@ -38,8 +65,8 @@ in
         on-focused-monitor-changed = [ "move-mouse monitor-lazy-center" ];
 
         gaps = {
-          inner = { horizontal = 8; vertical = 8; };
-          outer = { left = 8; bottom = 8; top = cfg.gaps.outer.top; right = 8; };
+          inner = { horizontal = cfg.gaps.inner.horizontal; vertical = cfg.gaps.inner.vertical; };
+          outer = { left = cfg.gaps.outer.left; bottom = cfg.gaps.outer.bottom; top = cfg.gaps.outer.top; right = cfg.gaps.outer.right; };
         };
 
         exec-on-workspace-change = [
