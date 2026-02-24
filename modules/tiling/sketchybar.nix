@@ -64,7 +64,32 @@ in
   config = lib.mkIf cfg.enable {
     services.sketchybar = {
       enable = true;
-      config = builtins.readFile "${sketchybarConfigDir}/sketchybarrc";
+      config =
+        let
+          template = builtins.readFile ./sketchybar/sketchybarrc;
+        in
+          lib.replaceStrings
+            [
+              "@BAR_COLOR@"
+              "@BAR_BORDER_COLOR@"
+              "@ICON_COLOR@"
+              "@LABEL_COLOR@"
+              "@ACCENT_COLOR@"
+              "@BAR_HEIGHT@"
+              "@BAR_POSITION@"
+              "@PLUGIN_DIR@"
+            ]
+            [
+              cfg.theme.barColor
+              cfg.theme.barBorderColor
+              cfg.theme.iconColor
+              cfg.theme.labelColor
+              cfg.theme.accentColor
+              (toString cfg.theme.barHeight)
+              cfg.theme.barPosition
+              "${sketchybarConfigDir}/plugins"
+            ]
+            template;
     };
 
     system.defaults.NSGlobalDomain._HIHideMenuBar = cfg.hideMenuBar;
