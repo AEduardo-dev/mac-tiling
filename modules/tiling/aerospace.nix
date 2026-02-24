@@ -71,7 +71,7 @@ in
 
         exec-on-workspace-change = [
           "${pkgs.bash}/bin/bash" "-c"
-          "sketchybar --trigger aerospace_workspace_change AEROSP_FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE AEROSP_PREV_WORKSPACE=$AEROSPACE_PREV_WORKSPACE"
+          "command -v sketchybar >/dev/null 2>&1 && sketchybar --trigger aerospace_workspace_change AEROSP_FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE AEROSP_PREV_WORKSPACE=$AEROSPACE_PREV_WORKSPACE"
         ];
 
         mode = {
