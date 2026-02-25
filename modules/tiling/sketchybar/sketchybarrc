@@ -1,91 +1,16 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-# ── Bar Appearance ──────────────────────────────────────────
-sketchybar --bar \
-    height=@BAR_HEIGHT@ \
-    position=@BAR_POSITION@ \
-    color=@BAR_COLOR@ \
-    border_color=@BAR_BORDER_COLOR@ \
-    border_width=1 \
-    shadow=on \
-    sticky=on \
-    padding_left=10 \
-    padding_right=10 \
-    topmost=window \
-    font_smoothing=on \
-    y_offset=0 \
-    margin=0 \
-    notch_width=200
+export SBAR_PLUGIN_DIR="$CONFIG_DIR/plugins"
+export SBAR_ITEM_DIR="$CONFIG_DIR/items"
+export SBAR_EVENT_DIR="$CONFIG_DIR/events"
 
-# ── Defaults ────────────────────────────────────────────────
-sketchybar --default \
-    icon.font="SF Pro:Bold:14.0" \
-    icon.color=@ICON_COLOR@ \
-    label.font="SF Pro:Semibold:13.0" \
-    label.color=@LABEL_COLOR@ \
-    padding_left=5 \
-    padding_right=5 \
-    label.padding_left=4 \
-    label.padding_right=4 \
-    icon.padding_left=4 \
-    icon.padding_right=4
+source "$CONFIG_DIR/core/env.sh"
+source "$CONFIG_DIR/core/init_widgets.sh"
+source "$CONFIG_DIR/core/bar_defaults.sh"
+source "$CONFIG_DIR/core/loader.sh"
+source "$CONFIG_DIR/core/load_widgets.sh"
+source "$CONFIG_DIR/core/styles.sh"
 
-# ── Aerospace Workspaces ────────────────────────────────────
-PLUGIN_DIR="@PLUGIN_DIR@"
-
-if command -v aerospace >/dev/null 2>&1; then
-    for sid in $(aerospace list-workspaces --all); do
-        sketchybar --add item "space.$sid" left \
-            --set "space.$sid" \
-            associated_space="$sid" \
-            icon="$sid" \
-            icon.highlight_color=@ACCENT_COLOR@ \
-            label.drawing=off \
-            background.color=0x44ffffff \
-            background.corner_radius=5 \
-            background.height=20 \
-            background.drawing=off \
-            click_script="aerospace workspace $sid" \
-            script="$PLUGIN_DIR/aerospace.sh"
-    done
-
-    sketchybar --add event aerospace_workspace_change
-
-    for sid in $(aerospace list-workspaces --all); do
-        sketchybar --subscribe "space.$sid" aerospace_workspace_change
-    done
-else
-    echo "Warning: 'aerospace' command not found in PATH; workspace items will not be created." >&2
-fi
-
-# ── Left: Front App ────────────────────────────────────────
-sketchybar --add item front_app left \
-    --set front_app \
-    icon.drawing=off \
-    label.font="SF Pro:Bold:13.0" \
-    script="$PLUGIN_DIR/front_app.sh" \
-    --subscribe front_app front_app_switched
-
-# ── Right: Clock ────────────────────────────────────────────
-sketchybar --add item clock right \
-    --set clock \
-    update_freq=10 \
-    icon="󰥔" \
-    script="$PLUGIN_DIR/clock.sh"
-
-# ── Right: Battery ──────────────────────────────────────────
-sketchybar --add item battery right \
-    --set battery \
-    update_freq=120 \
-    script="$PLUGIN_DIR/battery.sh" \
-    --subscribe battery system_woke power_source_change
-
-# ── Right: CPU ──────────────────────────────────────────────
-sketchybar --add item cpu right \
-    --set cpu \
-    update_freq=5 \
-    icon="󰻠" \
-    script="$PLUGIN_DIR/cpu.sh"
-
-# ── Finalize ────────────────────────────────────────────────
 sketchybar --update
+
+source "$CONFIG_DIR/core/events.sh"

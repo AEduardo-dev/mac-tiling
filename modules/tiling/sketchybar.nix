@@ -14,22 +14,20 @@
       mkdir -p $out
       cp -r $src/* $out/
 
-      substituteInPlace $out/plugins/aerospace.sh \
-        --replace-fail "@ACCENT_COLOR@" "${cfg.theme.accentColor}" \
-        --replace-fail "@ICON_COLOR@" "${cfg.theme.iconColor}" \
-        --replace-fail "@FOCUSED_ICON_COLOR@" "${cfg.theme.focusedIconColor}"
-
-      chmod +x $out/plugins/*.sh
+      find $out -name "*.sh" -exec chmod +x {} \;
       chmod +x $out/sketchybarrc
 
-      patchShebangs $out/sketchybarrc
-      patchShebangs $out/plugins
+      patchShebangs $out
     '';
     meta = {
-      description = "SketchyBar configuration files";
+      description = "SketchyBar configuration files (sketchybar-gray)";
       platforms = lib.platforms.darwin;
     };
   };
+
+  widgetListToStr = widgets:
+    if widgets == [] then ""
+    else lib.concatStringsSep " " widgets;
 in {
   options.modules.tiling.sketchybar = {
     enable = lib.mkOption {
@@ -38,46 +36,90 @@ in {
       description = "Enable SketchyBar status bar";
     };
 
-    theme = {
-      barColor = lib.mkOption {
-        type = lib.types.strMatching "0x[0-9a-fA-F]{8}";
-        default = "0xff1e1e2e";
-        description = "Bar background color (ARGB hex)";
+    theme = lib.mkOption {
+      type = lib.types.enum [
+        "onedark" "onelight" "nord" "tokyonight"
+        "githubdark" "githublight" "gruvboxdark" "gruvboxlight"
+        "ayudark" "ayulight" "blossomlight"
+      ];
+      default = "onedark";
+      description = "Color theme for SketchyBar (one of the 11 built-in themes)";
+    };
+
+    barStyle = lib.mkOption {
+      type = lib.types.enum ["block" "compact"];
+      default = "block";
+      description = "Bar style: 'block' (colored backgrounds per widget) or 'compact' (grouped sections)";
+    };
+
+    barHeight = lib.mkOption {
+      type = lib.types.int;
+      default = 37;
+      description = "Bar height in pixels";
+    };
+
+    barPosition = lib.mkOption {
+      type = lib.types.enum ["top" "bottom"];
+      default = "top";
+      description = "Bar position (top or bottom)";
+    };
+
+    barBackground = lib.mkOption {
+      type = lib.types.enum ["transparent" "bg1"];
+      default = "transparent";
+      description = "Bar background: 'transparent' or 'bg1' (solid theme background color)";
+    };
+
+    weatherLocation = lib.mkOption {
+      type = lib.types.str;
+      default = "";
+      description = "Location for weather widget (e.g. 'New York', 'London'). Empty string disables weather.";
+    };
+
+    calendarFormat = lib.mkOption {
+      type = lib.types.str;
+      default = "YYYY-MM-DD";
+      description = "Date format for the calendar widget (e.g. 'YYYY-MM-DD', 'ddd MM/DD')";
+    };
+
+    widgets = {
+      left = lib.mkOption {
+        type = lib.types.listOf lib.types.str;
+        default = [];
+        description = "Widgets shown on the left side. Empty list uses defaults (space). Available: space, front_app, clock, calendar, weather, caffeinate, volume, battery, disk, ram, cpu, netstat, bluetooth, kakaotalk";
       };
-      barBorderColor = lib.mkOption {
-        type = lib.types.strMatching "0x[0-9a-fA-F]{8}";
-        default = "0xff313244";
-        description = "Bar border color (ARGB hex)";
+      center = lib.mkOption {
+        type = lib.types.listOf lib.types.str;
+        default = [];
+        description = "Widgets shown in the center. Empty list uses defaults (front_app).";
       };
-      iconColor = lib.mkOption {
-        type = lib.types.strMatching "0x[0-9a-fA-F]{8}";
-        default = "0xffcdd6f4";
-        description = "Icon color (ARGB hex)";
+      right = lib.mkOption {
+        type = lib.types.listOf lib.types.str;
+        default = [];
+        description = "Widgets shown on the right side. Empty list uses defaults (clock weather caffeinate volume battery disk ram cpu kakaotalk config).";
       };
-      labelColor = lib.mkOption {
-        type = lib.types.strMatching "0x[0-9a-fA-F]{8}";
-        default = "0xffcdd6f4";
-        description = "Label color (ARGB hex)";
+    };
+
+    fonts = {
+      labelFamily = lib.mkOption {
+        type = lib.types.str;
+        default = "SpaceMono Nerd Font Mono";
+        description = "Font family for labels and icons";
       };
-      accentColor = lib.mkOption {
-        type = lib.types.strMatching "0x[0-9a-fA-F]{8}";
-        default = "0xffcba6f7";
-        description = "Accent color for focused items (ARGB hex)";
+      iconSize = lib.mkOption {
+        type = lib.types.str;
+        default = "18.0";
+        description = "Icon font size";
       };
-      focusedIconColor = lib.mkOption {
-        type = lib.types.strMatching "0x[0-9a-fA-F]{8}";
-        default = "0xff1e1e2e";
-        description = "Icon color on the focused workspace badge (ARGB hex)";
+      labelSize = lib.mkOption {
+        type = lib.types.str;
+        default = "12.0";
+        description = "Label font size";
       };
-      barHeight = lib.mkOption {
-        type = lib.types.int;
-        default = 32;
-        description = "Bar height in pixels";
-      };
-      barPosition = lib.mkOption {
-        type = lib.types.enum ["top" "bottom"];
-        default = "top";
-        description = "Bar position (top or bottom)";
+      appIconSize = lib.mkOption {
+        type = lib.types.str;
+        default = "13.5";
+        description = "App icon font size (requires sketchybar-app-font)";
       };
     };
 
@@ -92,32 +134,39 @@ in {
     services.sketchybar = {
       enable = true;
       config = let
-        template = builtins.readFile ./sketchybar/sketchybarrc;
-      in
-        lib.replaceStrings
-        [
-          "@BAR_COLOR@"
-          "@BAR_BORDER_COLOR@"
-          "@ICON_COLOR@"
-          "@LABEL_COLOR@"
-          "@ACCENT_COLOR@"
-          "@BAR_HEIGHT@"
-          "@BAR_POSITION@"
-          "@PLUGIN_DIR@"
-        ]
-        [
-          cfg.theme.barColor
-          cfg.theme.barBorderColor
-          cfg.theme.iconColor
-          cfg.theme.labelColor
-          cfg.theme.accentColor
-          (toString cfg.theme.barHeight)
-          cfg.theme.barPosition
-          "${sketchybarConfigDir}/plugins"
-        ]
-        template;
+        leftStr = widgetListToStr cfg.widgets.left;
+        centerStr = widgetListToStr cfg.widgets.center;
+        rightStr = widgetListToStr cfg.widgets.right;
+        weatherLoc = if cfg.weatherLocation == "" then "Seoul" else cfg.weatherLocation;
+      in ''
+        #!/usr/bin/env bash
+
+        # Nix-managed configuration — do not edit directly
+        export SBAR_THEME="${cfg.theme}"
+        export SBAR_BAR_STYLE="${cfg.barStyle}"
+        export SBAR_BAR_HEIGHT=${toString cfg.barHeight}
+        export SBAR_BAR_POSITION="${cfg.barPosition}"
+        export SBAR_BAR_BACKGROUND="${cfg.barBackground}"
+        export SBAR_WEATHER_LOCATION="${weatherLoc}"
+        export SBAR_CALENDAR_FORMAT="${cfg.calendarFormat}"
+        export SBAR_LABEL_FONT_FAMILY="${cfg.fonts.labelFamily}"
+        export SBAR_ICON_FONT_SIZE="${cfg.fonts.iconSize}"
+        export SBAR_LABEL_FONT_SIZE="${cfg.fonts.labelSize}"
+        export SBAR_APP_ICON_FONT_SIZE="${cfg.fonts.appIconSize}"
+        ${lib.optionalString (leftStr != "") ''export SBAR_WIDGETS_LEFT_ENABLED="${leftStr}"''}
+        ${lib.optionalString (centerStr != "") ''export SBAR_WIDGETS_CENTER_ENABLED="${centerStr}"''}
+        ${lib.optionalString (rightStr != "") ''export SBAR_WIDGETS_RIGHT_ENABLED="${rightStr}"''}
+
+        export CONFIG_DIR="${sketchybarConfigDir}"
+        source "${sketchybarConfigDir}/sketchybarrc"
+      '';
     };
+
+    environment.systemPackages = with pkgs; [
+      jq
+    ];
 
     system.defaults.NSGlobalDomain._HIHideMenuBar = cfg.hideMenuBar;
   };
 }
+
