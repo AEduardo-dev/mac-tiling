@@ -41,4 +41,8 @@ else
   export SBAR_CONFIG_VISIBLE="true"
 fi
 
-export SBAR_AUTO_INSERT_SPACER=true
+if [ "$SBAR_BAR_STYLE" = "compact" ]; then
+  export SBAR_AUTO_INSERT_SPACER=false
+else
+  export SBAR_AUTO_INSERT_SPACER=true
+fi

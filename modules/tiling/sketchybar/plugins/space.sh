@@ -18,11 +18,9 @@ if command -v aerospace >/dev/null 2>&1; then
 elif command -v yabai >/dev/null 2>&1; then
   source "$CONFIG_DIR/plugins/yabai.sh"
   APPS=$(get_space_apps "$SID")
-  SELECTED="true"
 else
   source "$CONFIG_DIR/plugins/mission_control.sh"
   APPS=$(get_space_apps)
-  SELECTED="true"
 fi
 
 ICONS=""

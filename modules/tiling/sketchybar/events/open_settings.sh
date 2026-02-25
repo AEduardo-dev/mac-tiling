@@ -19,7 +19,8 @@ fi
 
 # Check if app is already running
 if pgrep -f "$SETTINGS_BIN" > /dev/null; then
-  osascript -e 'tell application "System Events" to set frontmost of first process whose unix id is '$(pgrep -f "$SETTINGS_BIN")' to true' 2>/dev/null
+  PID="$(pgrep -f "$SETTINGS_BIN" | head -n 1)"
+  osascript -e "tell application \"System Events\" to set frontmost of first process whose unix id is $PID to true" 2>/dev/null
   exit 0
 fi
 

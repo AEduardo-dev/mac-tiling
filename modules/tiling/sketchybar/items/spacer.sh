@@ -1,13 +1,11 @@
 #!/usr/bin/env bash
 
-# Sketchybar environment variables
-: "${NAME:=}"
+SPACER_NAME="$1"
+POSITION="${2:-right}"
 
-NAME=$1
-
-if [ -z "$NAME" ]; then
+if [ -z "$SPACER_NAME" ]; then
   return 1
 fi
 
-sketchybar --add item "spacer_$NAME" right \
-  --set "spacer_$NAME" width=8
+sketchybar --add item "spacer_$SPACER_NAME" "$POSITION" \
+  --set "spacer_$SPACER_NAME" width=8

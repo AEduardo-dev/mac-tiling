@@ -3,6 +3,8 @@
 SPACER_INDEX=1
 
 load_widgets() {
+  local position="$1"
+  shift
   local widget_array=("$@")
 
   if [ "$SBAR_AUTO_INSERT_SPACER" = true ]; then
@@ -14,7 +16,7 @@ load_widgets() {
       source "$SBAR_ITEM_DIR/${widget_name}.sh" "${widget_arg}"
 
       if [ $((i + 1)) -lt ${#widget_array[@]} ]; then
-        source "$SBAR_ITEM_DIR/spacer.sh" "$SPACER_INDEX"
+        source "$SBAR_ITEM_DIR/spacer.sh" "$SPACER_INDEX" "$position"
         ((SPACER_INDEX++))
       fi
     done
