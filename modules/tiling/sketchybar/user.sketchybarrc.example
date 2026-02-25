@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+
+# User Custom Configuration
+# Copy this file to user.sketchybarrc and customize your settings
+# cp user.sketchybarrc.example user.sketchybarrc
+
+# ========== Theme ==========
+# Available themes: onedark, onelight, nord, tokyonight, githubdark, githublight,
+#                   gruvboxdark, gruvboxlight, ayudark, ayulight, blossomlight
+# export SBAR_THEME="onedark"
+
+# ========== Bar Style ==========
+# export SBAR_BAR_STYLE="block"   # block or compact
+# export SBAR_BAR_HEIGHT=56
+# export SBAR_BAR_POSITION="top"
+# export SBAR_BAR_BACKGROUND="transparent"  # transparent or bg1
+
+# ========== Fonts ==========
+# export SBAR_LABEL_FONT_FAMILY="SpaceMono Nerd Font Mono"
+# export SBAR_ICON_FONT_SIZE="18.0"
+# export SBAR_LABEL_FONT_SIZE="12.0"
+# export SBAR_APP_ICON_FONT_SIZE="13.5"
+
+# ========== Widget List ==========
+# Customize which widgets to show in the bar
+# Uncomment and modify the list below to override default widgets
+
+# export SBAR_WIDGETS_LEFT_ENABLED="space"
+# export SBAR_WIDGETS_CENTER_ENABLED="front_app"
+# export SBAR_WIDGETS_RIGHT_ENABLED="clock calendar weather caffeinate volume battery disk ram cpu config"
+
+# ========== Display Options ==========
+# export SBAR_CLOCK_FORMAT="MM/DD HH:mm"
+# export SBAR_CALENDAR_FORMAT="YYYY-MM-DD"
+# export SBAR_WEATHER_LOCATION="Seoul"
+# export SBAR_NETSTAT_SHOW_GRAPH=true
+# export SBAR_NETSTAT_SHOW_SPEED=false
+# export SBAR_CPU_SHOW_GRAPH=true
+# export SBAR_CPU_SHOW_PERCENT=true
+# export SBAR_RAM_SHOW_GRAPH=true
+# export SBAR_RAM_SHOW_PERCENT=true
+
+# ========== Colors ==========
+# Override widget colors if needed (requires theme to be loaded first)
+# export SBAR_COLOR_CLOCK="$COLOR_YELLOW"
+# export SBAR_COLOR_WEATHER="$COLOR_CYAN"
+# export SBAR_COLOR_BATTERY="$COLOR_ORANGE"

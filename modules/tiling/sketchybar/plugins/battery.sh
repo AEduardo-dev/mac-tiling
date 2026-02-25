@@ -1,21 +1,27 @@
-#!/bin/bash
-BATTERY_INFO="$(pmset -g batt)"
-PERCENTAGE="$(printf '%s\n' "$BATTERY_INFO" | grep -Eo "[0-9]+%" | cut -d% -f1)"
-PERCENTAGE="${PERCENTAGE:-0}"
-CHARGING="$(printf '%s\n' "$BATTERY_INFO" | grep 'AC Power')"
+#!/usr/bin/env bash
 
-if [ -n "$CHARGING" ]; then
-    ICON="󰂄"
-elif [ "$PERCENTAGE" -gt 80 ]; then
-    ICON="󰁹"
-elif [ "$PERCENTAGE" -gt 60 ]; then
-    ICON="󰂀"
-elif [ "$PERCENTAGE" -gt 40 ]; then
-    ICON="󰁾"
-elif [ "$PERCENTAGE" -gt 20 ]; then
-    ICON="󰁼"
-else
-    ICON="󰁺"
+source "$CONFIG_DIR/plugins/icon.sh"
+
+PERCENTAGE="$(pmset -g batt | grep -Eo '[0-9]+%' | tr -d '%')"
+CHARGING="$(pmset -g batt | grep 'AC Power')"
+
+if [ -z "$PERCENTAGE" ]; then
+  exit 0
 fi
 
-sketchybar --set "$NAME" icon="$ICON" label="${PERCENTAGE}%"
+if [ "$CHARGING" != "" ]; then
+  ICON=$(get_widget_icon "battery_full")
+else
+  if [ "$PERCENTAGE" -ge 75 ]; then
+    ICON=$(get_widget_icon "battery_full")
+  elif [ "$PERCENTAGE" -ge 50 ]; then
+    ICON=$(get_widget_icon "battery_medium")
+  elif [ "$PERCENTAGE" -ge 25 ]; then
+    ICON=$(get_widget_icon "battery_low")
+  else
+    ICON=$(get_widget_icon "battery_empty")
+  fi
+fi
+
+sketchybar --set battery.icon icon="$ICON"
+sketchybar --set battery.percent label="${PERCENTAGE}%"
