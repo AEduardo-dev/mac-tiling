@@ -73,7 +73,7 @@ in {
     weatherLocation = lib.mkOption {
       type = lib.types.str;
       default = "";
-      description = "Location for weather widget (e.g. 'New York', 'London'). Empty string disables weather.";
+      description = "Location for weather widget (e.g. 'New York', 'London'). Empty string uses the default location 'Seoul'.";
     };
 
     calendarFormat = lib.mkOption {

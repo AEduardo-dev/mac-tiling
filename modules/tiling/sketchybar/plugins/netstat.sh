@@ -9,6 +9,7 @@ cleanup() {
     kill "$netstat_pid" 2>/dev/null
     wait "$netstat_pid" 2>/dev/null
   fi
+  rm -f "$tmp_file"
 }
 
 trap cleanup EXIT
@@ -53,7 +54,7 @@ get_speed_bar() {
   echo "$result"
 }
 
-tmp_file="/tmp/sketchybar_netstat.out"
+tmp_file=$(mktemp /tmp/sketchybar_netstat.XXXXXX)
 
 netstat -w1 > "$tmp_file" 2>&1 &
 netstat_pid=$!

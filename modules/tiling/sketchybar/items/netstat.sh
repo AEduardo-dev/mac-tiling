@@ -3,8 +3,8 @@
 source "$CONFIG_DIR/plugins/icon.sh"
 source "$CONFIG_DIR/plugins/helpers.sh"
 
-DOWN_ICON=$(get_widget_icon "network_upload")
-UP_ICON=$(get_widget_icon "network_download")
+DOWN_ICON=$(get_widget_icon "network_download")
+UP_ICON=$(get_widget_icon "network_upload")
 
 BRACKET_ITEMS=()
 

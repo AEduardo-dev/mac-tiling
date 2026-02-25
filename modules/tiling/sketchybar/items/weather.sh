@@ -12,7 +12,7 @@ sketchybar --add item weather.label right \
   label.padding_right="$SBAR_ITEM_LABEL_PADDING_RIGHT" \
   update_freq=600 \
   updates=on \
-  script="SBAR_WEATHER_LOCATION=$SBAR_WEATHER_LOCATION $SBAR_PLUGIN_DIR/weather.sh"
+  script="$SBAR_PLUGIN_DIR/weather.sh"
 
 sketchybar --add item weather.icon right \
   --set weather.icon \

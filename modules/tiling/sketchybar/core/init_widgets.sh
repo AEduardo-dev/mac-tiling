@@ -3,7 +3,7 @@
 if [ -n "$SBAR_WIDGETS_LEFT_ENABLED" ]; then
   read -ra SBAR_WIDGETS_LEFT <<< "$SBAR_WIDGETS_LEFT_ENABLED"
 else
-  export SBAR_WIDGETS_LEFT=(
+  SBAR_WIDGETS_LEFT=(
     "space"
   )
 fi
@@ -11,7 +11,7 @@ fi
 if [ -n "$SBAR_WIDGETS_CENTER_ENABLED" ]; then
   read -ra SBAR_WIDGETS_CENTER <<< "$SBAR_WIDGETS_CENTER_ENABLED"
 else
-  export SBAR_WIDGETS_CENTER=(
+  SBAR_WIDGETS_CENTER=(
     "front_app"
   )
 fi
@@ -26,7 +26,7 @@ if [ -n "$SBAR_WIDGETS_RIGHT_ENABLED" ]; then
     SBAR_WIDGETS_RIGHT+=("config")
   fi
 else
-  export SBAR_WIDGETS_RIGHT=(
+  SBAR_WIDGETS_RIGHT=(
     "clock"
     "weather"
     "caffeinate"

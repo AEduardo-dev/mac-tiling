@@ -6,13 +6,16 @@
 # Set CONFIG_DIR if not set
 CONFIG_DIR="${CONFIG_DIR:-$HOME/.config/sketchybar}"
 
-# Get theme from user config or use default
-USER_CONFIG="$HOME/.config/sketchybar/user.sketchybarrc"
-if [ -f "$USER_CONFIG" ]; then
-  THEME=$(grep "^export SBAR_THEME=" "$USER_CONFIG" | sed 's/.*="\(.*\)"/\1/' | sed 's/.*=\(.*\)/\1/')
+# Use SBAR_THEME if already exported (e.g. by the Nix wrapper), otherwise fall
+# back to the user runtime config, then default to onedark.
+if [ -z "$SBAR_THEME" ]; then
+  USER_CONFIG="$HOME/.config/sketchybar/user.sketchybarrc"
+  if [ -f "$USER_CONFIG" ]; then
+    SBAR_THEME=$(grep "^export SBAR_THEME=" "$USER_CONFIG" | sed 's/.*="\(.*\)"/\1/' | sed 's/.*=\(.*\)/\1/')
+  fi
 fi
 
-THEME="${THEME:-onedark}"
+THEME="${SBAR_THEME:-onedark}"
 THEME_FILE="$CONFIG_DIR/tokens/themes/$THEME.sh"
 
 if [ -f "$THEME_FILE" ]; then
