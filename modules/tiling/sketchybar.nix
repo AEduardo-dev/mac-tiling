@@ -6,17 +6,39 @@
 }: let
   cfg = config.modules.tiling.sketchybar;
 
+  fixPathsScript = pkgs.writeScript "fix-config-dir.pl" ''
+    use strict;
+    use warnings;
+    my $replacement = $ARGV[0];
+    while (my $file = <STDIN>) {
+        chomp $file;
+        open my $fh, '<', $file or next;
+        my $content = do { local $/; <$fh> };
+        close $fh;
+        $content =~ s/\$\{CONFIG_DIR:-[^}]*\}/$replacement/g;
+        $content =~ s/\$\{CONFIG_DIR\}/$replacement/g;
+        $content =~ s/\$CONFIG_DIR/$replacement/g;
+        open $fh, '>', $file or next;
+        print $fh $content;
+        close $fh;
+    }
+  '';
+
   sketchybarConfigDir = pkgs.stdenv.mkDerivation {
     name = "sketchybar-config";
     src = ./sketchybar;
     dontBuild = true;
+    nativeBuildInputs = [pkgs.perl];
     installPhase = ''
       mkdir -p $out
       cp -r $src/* $out/
+      chmod -R u+w $out
+
+      find $out -type f \( -name "*.sh" -o -name "sketchybarrc" -o -name "*.example" \) \
+        | perl ${fixPathsScript} "$out"
 
       find $out -name "*.sh" -exec chmod +x {} \;
       chmod +x $out/sketchybarrc
-
       patchShebangs $out
     '';
     meta = {
@@ -26,7 +48,8 @@
   };
 
   widgetListToStr = widgets:
-    if widgets == [] then ""
+    if widgets == []
+    then ""
     else lib.concatStringsSep " " widgets;
 in {
   options.modules.tiling.sketchybar = {
@@ -38,9 +61,17 @@ in {
 
     theme = lib.mkOption {
       type = lib.types.enum [
-        "onedark" "onelight" "nord" "tokyonight"
-        "githubdark" "githublight" "gruvboxdark" "gruvboxlight"
-        "ayudark" "ayulight" "blossomlight"
+        "onedark"
+        "onelight"
+        "nord"
+        "tokyonight"
+        "githubdark"
+        "githublight"
+        "gruvboxdark"
+        "gruvboxlight"
+        "ayudark"
+        "ayulight"
+        "blossomlight"
       ];
       default = "onedark";
       description = "Color theme for SketchyBar (one of the 11 built-in themes)";
@@ -86,17 +117,17 @@ in {
       left = lib.mkOption {
         type = lib.types.listOf lib.types.str;
         default = [];
-        description = "Widgets shown on the left side. Empty list uses defaults (space). Available: space, front_app, clock, calendar, weather, caffeinate, volume, battery, disk, ram, cpu, netstat, bluetooth, kakaotalk";
+        description = "Widgets shown on the left side.";
       };
       center = lib.mkOption {
         type = lib.types.listOf lib.types.str;
         default = [];
-        description = "Widgets shown in the center. Empty list uses defaults (front_app).";
+        description = "Widgets shown in the center.";
       };
       right = lib.mkOption {
         type = lib.types.listOf lib.types.str;
         default = [];
-        description = "Widgets shown on the right side. Empty list uses defaults (clock weather caffeinate volume battery disk ram cpu kakaotalk config).";
+        description = "Widgets shown on the right side.";
       };
     };
 
@@ -133,11 +164,15 @@ in {
   config = lib.mkIf cfg.enable {
     services.sketchybar = {
       enable = true;
+      extraPackages = [pkgs.jq pkgs.bc];
       config = let
         leftStr = widgetListToStr cfg.widgets.left;
         centerStr = widgetListToStr cfg.widgets.center;
         rightStr = widgetListToStr cfg.widgets.right;
-        weatherLoc = if cfg.weatherLocation == "" then "Seoul" else cfg.weatherLocation;
+        weatherLoc =
+          if cfg.weatherLocation == ""
+          then "Seoul"
+          else cfg.weatherLocation;
       in ''
         #!/usr/bin/env bash
 
@@ -164,9 +199,9 @@ in {
 
     environment.systemPackages = with pkgs; [
       jq
+      bc
     ];
 
     system.defaults.NSGlobalDomain._HIHideMenuBar = cfg.hideMenuBar;
   };
 }
-
