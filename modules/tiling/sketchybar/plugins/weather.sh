@@ -3,9 +3,9 @@
 source "$CONFIG_DIR/plugins/icon.sh"
 
 LOCATION_ENCODED="${SBAR_WEATHER_LOCATION// /+}"
-WEATHER_JSON=$(curl -s "wttr.in/${LOCATION_ENCODED}?format=j1" 2>/dev/null)
+WEATHER_JSON=$(curl -s --connect-timeout 5 --max-time 10 "wttr.in/${LOCATION_ENCODED}?format=j1" 2>/dev/null)
 
-if [ -z "$WEATHER_JSON" ]; then
+if [ -z "$WEATHER_JSON" ] || ! echo "$WEATHER_JSON" | jq -e '.current_condition[0]' >/dev/null 2>&1; then
   TEMP="N/A"
   WEATHER_CODE="113"
   IS_DAY=1
