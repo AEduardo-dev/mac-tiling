@@ -24,9 +24,9 @@ else
     WEATHER_CODE=0
     IS_DAY=1
   else
-    TEMP=$(echo "$WEATHER_JSON" | jq -r '.current.temperature_2m' | sed 's/\..*//')
-    WEATHER_CODE=$(echo "$WEATHER_JSON" | jq -r '.current.weather_code')
-    IS_DAY=$(echo "$WEATHER_JSON" | jq -r '.current.is_day | round')
+    TEMP=$(echo "$WEATHER_JSON" | jq -r '.current.temperature_2m // "N/A"' | sed 's/\..*//')
+    WEATHER_CODE=$(echo "$WEATHER_JSON" | jq -r '.current.weather_code // 0')
+    IS_DAY=$(echo "$WEATHER_JSON" | jq -r '(.current.is_day // 1) | round')
   fi
 fi
 
