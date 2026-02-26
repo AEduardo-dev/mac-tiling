@@ -43,7 +43,6 @@ for sid in $workspaces; do
       background.drawing=on \
       padding_left=4 \
       padding_right=4 \
-      update_freq=2 \
       script="$SBAR_PLUGIN_DIR/space.sh" \
       click_script="$CLICK_SCRIPT" \
       --subscribe "space.$sid" $SPACE_EVENTS
@@ -61,7 +60,6 @@ for sid in $workspaces; do
       background.drawing=off \
       padding_left=4 \
       padding_right=4 \
-      update_freq=2 \
       script="$SBAR_PLUGIN_DIR/space.sh" \
       click_script="$CLICK_SCRIPT" \
       --subscribe "space.$sid" $SPACE_EVENTS
