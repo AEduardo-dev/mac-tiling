@@ -25,9 +25,8 @@ for sid in $workspaces; do
   CLICK_SCRIPT=$(get_space_click_command "$sid")
 
   if [ "$SBAR_BAR_STYLE" = "block" ]; then
-    sketchybar --add space "space.$sid" left \
+    sketchybar --add item "space.$sid" left \
       --set "space.$sid" \
-      space="$sid" \
       icon="" \
       icon.font="$SBAR_APP_ICON_FONT:Regular:$SBAR_APP_ICON_FONT_SIZE" \
       icon.color="$COLOR_WHITE" \
@@ -49,9 +48,8 @@ for sid in $workspaces; do
       click_script="$CLICK_SCRIPT" \
       --subscribe "space.$sid" $SPACE_EVENTS
   else
-    sketchybar --add space "space.$sid" left \
+    sketchybar --add item "space.$sid" left \
       --set "space.$sid" \
-      space="$sid" \
       icon="" \
       icon.font="$SBAR_APP_ICON_FONT:Regular:$SBAR_APP_ICON_FONT_SIZE" \
       icon.color="$COLOR_WHITE" \
