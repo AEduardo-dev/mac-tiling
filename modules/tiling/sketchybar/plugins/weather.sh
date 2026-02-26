@@ -2,44 +2,31 @@
 
 source "$CONFIG_DIR/plugins/icon.sh"
 
-LOCATION_ENCODED="${SBAR_WEATHER_LOCATION// /+}"
-WEATHER_JSON=$(curl -s --connect-timeout 5 --max-time 10 "wttr.in/${LOCATION_ENCODED}?format=j1" 2>/dev/null)
+LOCATION_ENCODED="${SBAR_WEATHER_LOCATION// /%20}"
 
-if [ -z "$WEATHER_JSON" ] || ! echo "$WEATHER_JSON" | jq -e '.current_condition[0]' >/dev/null 2>&1; then
+# Geocode the location name to lat/lon via Open-Meteo
+GEO_JSON=$(curl -s --connect-timeout 5 --max-time 10 \
+  "https://geocoding-api.open-meteo.com/v1/search?name=${LOCATION_ENCODED}&count=1&language=en&format=json" 2>/dev/null)
+
+LAT=$(echo "$GEO_JSON" | jq -r '.results[0].latitude // empty' 2>/dev/null)
+LON=$(echo "$GEO_JSON" | jq -r '.results[0].longitude // empty' 2>/dev/null)
+
+if [ -z "$LAT" ] || [ -z "$LON" ]; then
   TEMP="N/A"
-  WEATHER_CODE="113"
+  WEATHER_CODE=0
   IS_DAY=1
 else
-  TEMP=$(echo "$WEATHER_JSON" | jq -r '.current_condition[0].temp_C')
-  WEATHER_CODE=$(echo "$WEATHER_JSON" | jq -r '.current_condition[0].weatherCode')
+  WEATHER_JSON=$(curl -s --connect-timeout 5 --max-time 10 \
+    "https://api.open-meteo.com/v1/forecast?latitude=${LAT}&longitude=${LON}&current=temperature_2m,weather_code,is_day&timezone=auto" 2>/dev/null)
 
-  SUNRISE=$(echo "$WEATHER_JSON" | jq -r '.weather[0].astronomy[0].sunrise')
-  SUNSET=$(echo "$WEATHER_JSON" | jq -r '.weather[0].astronomy[0].sunset')
-
-  CURRENT_HOUR=$(date +%H)
-  CURRENT_MIN=$(date +%M)
-  CURRENT_TIME=$((10#$CURRENT_HOUR * 60 + 10#$CURRENT_MIN))
-
-  SUNRISE_HOUR=$(echo "$SUNRISE" | awk '{print $1}' | sed 's/:/ /')
-  SUNRISE_AMPM=$(echo "$SUNRISE" | awk '{print $2}')
-  SUNRISE_H=$(echo "$SUNRISE_HOUR" | awk '{print $1}')
-  SUNRISE_M=$(echo "$SUNRISE_HOUR" | awk '{print $2}')
-  [ "$SUNRISE_AMPM" = "PM" ] && [ "$SUNRISE_H" != "12" ] && SUNRISE_H=$((10#$SUNRISE_H + 12))
-  [ "$SUNRISE_AMPM" = "AM" ] && [ "$SUNRISE_H" = "12" ] && SUNRISE_H=0
-  SUNRISE_TIME=$((10#$SUNRISE_H * 60 + 10#$SUNRISE_M))
-
-  SUNSET_HOUR=$(echo "$SUNSET" | awk '{print $1}' | sed 's/:/ /')
-  SUNSET_AMPM=$(echo "$SUNSET" | awk '{print $2}')
-  SUNSET_H=$(echo "$SUNSET_HOUR" | awk '{print $1}')
-  SUNSET_M=$(echo "$SUNSET_HOUR" | awk '{print $2}')
-  [ "$SUNSET_AMPM" = "PM" ] && [ "$SUNSET_H" != "12" ] && SUNSET_H=$((10#$SUNSET_H + 12))
-  [ "$SUNSET_AMPM" = "AM" ] && [ "$SUNSET_H" = "12" ] && SUNSET_H=0
-  SUNSET_TIME=$((10#$SUNSET_H * 60 + 10#$SUNSET_M))
-
-  if [ "$CURRENT_TIME" -ge "$SUNRISE_TIME" ] && [ "$CURRENT_TIME" -lt "$SUNSET_TIME" ]; then
+  if [ -z "$WEATHER_JSON" ] || ! echo "$WEATHER_JSON" | jq -e '.current' >/dev/null 2>&1; then
+    TEMP="N/A"
+    WEATHER_CODE=0
     IS_DAY=1
   else
-    IS_DAY=0
+    TEMP=$(echo "$WEATHER_JSON" | jq -r '.current.temperature_2m' | sed 's/\..*//')
+    WEATHER_CODE=$(echo "$WEATHER_JSON" | jq -r '.current.weather_code')
+    IS_DAY=$(echo "$WEATHER_JSON" | jq -r '.current.is_day | round')
   fi
 fi
 

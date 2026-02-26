@@ -27,33 +27,34 @@ get_weather_icon() {
 
   suffix=$([ "$is_day" -eq 1 ] && echo "_day" || echo "_night")
 
+  # WMO weather interpretation codes (Open-Meteo)
   case "$code" in
-  113)
+  0 | 1)
     icon_name="weather_clear${suffix}"
     ;;
-  116 | 122)
+  2)
     icon_name="weather_partly_cloudy${suffix}"
     ;;
-  119)
+  3)
     icon_name="weather_cloudy${suffix}"
     ;;
-  143 | 248 | 260)
+  45 | 48)
     icon_name="weather_fog${suffix}"
     ;;
-  176 | 185 | 263 | 266 | 281 | 284 | 293 | 296 | 299 | 302 | 305 | 308 | 311 | 314 | 353 | 356 | 359)
+  51 | 53 | 55 | 61 | 63 | 65 | 80 | 81 | 82)
     icon_name="weather_rain${suffix}"
     ;;
-  179 | 227 | 230 | 323 | 326 | 329 | 332 | 335 | 338 | 368 | 371)
-    icon_name="weather_snow${suffix}"
-    ;;
-  350 | 374 | 377 | 392 | 395)
-    icon_name="weather_hail${suffix}"
-    ;;
-  182 | 317 | 320 | 362 | 365)
+  56 | 57 | 66 | 67)
     icon_name="weather_sleet${suffix}"
     ;;
-  200 | 386 | 389)
+  71 | 73 | 75 | 77 | 85 | 86)
+    icon_name="weather_snow${suffix}"
+    ;;
+  95)
     icon_name="weather_thunderstorm${suffix}"
+    ;;
+  96 | 99)
+    icon_name="weather_hail${suffix}"
     ;;
   *)
     icon_name="weather_default"
