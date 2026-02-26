@@ -4,6 +4,11 @@
 : "${NAME:=}"
 : "${SID:=}"
 
+# Extract workspace ID from item name (space.1 -> 1) if SID not set
+if [ -z "$SID" ] && [ -n "$NAME" ]; then
+  SID="${NAME#space.}"
+fi
+
 source "$CONFIG_DIR/core/env.sh"
 source "$CONFIG_DIR/plugins/icon.sh"
 source "$CONFIG_DIR/plugins/helpers.sh"
