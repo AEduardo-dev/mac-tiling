@@ -10,7 +10,7 @@ if [ -z "$PERCENTAGE" ]; then
 fi
 
 if [ "$CHARGING" != "" ]; then
-  ICON=$(get_widget_icon "battery_full")
+  ICON=$(get_widget_icon "battery_charging")
 else
   if [ "$PERCENTAGE" -ge 75 ]; then
     ICON=$(get_widget_icon "battery_full")

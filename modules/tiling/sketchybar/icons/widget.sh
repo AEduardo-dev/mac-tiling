@@ -39,6 +39,9 @@ function __widget_icon_map() {
   "battery_full")
     icon_result="󰁹"
     ;;
+  "battery_charging")
+    icon_result="󰂄"
+    ;;
   "clock")
     icon_result="󰥔"
     ;;
