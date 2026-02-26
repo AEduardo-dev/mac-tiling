@@ -217,12 +217,7 @@ The status bar requires a [Nerd Font](https://www.nerdfonts.com/) for icons. Ins
 - **SpaceMono Nerd Font Mono** (default) — available via Homebrew: `brew install --cask font-space-mono-nerd-font`
 - Any other Nerd Font — set via `fonts.labelFamily`
 
-For app icons in the workspace widget, install [`sketchybar-app-font`](https://github.com/kvndrsslr/sketchybar-app-font):
-
-```bash
-curl -L https://github.com/kvndrsslr/sketchybar-app-font/releases/latest/download/sketchybar-app-font.ttf \
-  -o ~/Library/Fonts/sketchybar-app-font.ttf
-```
+The [`sketchybar-app-font`](https://github.com/kvndrsslr/sketchybar-app-font) for app icons is automatically installed by this module.
 
 ## Recommended macOS Settings
 
@@ -246,7 +241,7 @@ Logout and back in for it to take effect.
 : Set `weatherLocation` to a valid city name. Requires internet access to `wttr.in`. `jq` and `curl` must be in PATH (added automatically via `environment.systemPackages`).
 
 **App icons in workspace are empty**
-: Install `sketchybar-app-font` (see Font Requirements above).
+: Ensure `sketchybar-app-font` is installed (automatically installed by this module). Try restarting SketchyBar with `sketchybar --reload`.
 
 **SketchyBar not starting**
 : Check logs with `sudo launchctl start org.nixos.sketchybar` and look in `/var/log/sketchybar.log`.
