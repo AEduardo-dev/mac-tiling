@@ -5,6 +5,7 @@
   ...
 }: let
   cfg = config.modules.tiling.aerospace;
+  sketchybar-hook = "exec-and-forget sketchybar --trigger aerospace_workspace_change";
 in {
   options.modules.tiling.aerospace = {
     enable = lib.mkOption {
@@ -64,6 +65,9 @@ in {
         lib.recursiveUpdate {
           enable-normalization-flatten-containers = true;
           enable-normalization-opposite-orientation-for-nested-containers = true;
+          atfet-startup-command = [
+            "exec-and-forget sketchybar --reload"
+          ];
           on-focused-monitor-changed = ["move-mouse monitor-lazy-center"];
 
           gaps = {
@@ -104,15 +108,15 @@ in {
               "alt-7" = "workspace 7";
               "alt-8" = "workspace 8";
               "alt-9" = "workspace 9";
-              "alt-shift-1" = "move-node-to-workspace 1";
-              "alt-shift-2" = "move-node-to-workspace 2";
-              "alt-shift-3" = "move-node-to-workspace 3";
-              "alt-shift-4" = "move-node-to-workspace 4";
-              "alt-shift-5" = "move-node-to-workspace 5";
-              "alt-shift-6" = "move-node-to-workspace 6";
-              "alt-shift-7" = "move-node-to-workspace 7";
-              "alt-shift-8" = "move-node-to-workspace 8";
-              "alt-shift-9" = "move-node-to-workspace 9";
+              "alt-shift-1" = ["move-node-to-workspace 1" "${sketchybar-hook}"];
+              "alt-shift-2" = ["move-node-to-workspace 2" "${sketchybar-hook}"];
+              "alt-shift-3" = ["move-node-to-workspace 3" "${sketchybar-hook}"];
+              "alt-shift-4" = ["move-node-to-workspace 4" "${sketchybar-hook}"];
+              "alt-shift-5" = ["move-node-to-workspace 5" "${sketchybar-hook}"];
+              "alt-shift-6" = ["move-node-to-workspace 6" "${sketchybar-hook}"];
+              "alt-shift-7" = ["move-node-to-workspace 7" "${sketchybar-hook}"];
+              "alt-shift-8" = ["move-node-to-workspace 8" "${sketchybar-hook}"];
+              "alt-shift-9" = ["move-node-to-workspace 9" "${sketchybar-hook}"];
               "alt-f" = "fullscreen";
               "alt-shift-space" = "layout floating tiling";
               "alt-slash" = "layout tiles horizontal vertical";

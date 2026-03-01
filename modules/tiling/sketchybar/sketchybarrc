@@ -8,9 +8,8 @@ source "$CONFIG_DIR/core/env.sh"
 source "$CONFIG_DIR/core/init_widgets.sh"
 source "$CONFIG_DIR/core/bar_defaults.sh"
 source "$CONFIG_DIR/core/loader.sh"
+source "$CONFIG_DIR/core/events.sh"
 source "$CONFIG_DIR/core/load_widgets.sh"
 source "$CONFIG_DIR/core/styles.sh"
 
 sketchybar --update
-
-source "$CONFIG_DIR/core/events.sh"
