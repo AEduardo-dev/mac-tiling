@@ -12,7 +12,7 @@ export COLOR_LIGHT_GRAY="0xFF828C99"
 export COLOR_DARK_GRAY="0xFFd2d2d2"
 
 export COLOR_BG1="0xFFfafafa"
-export COLOR_BG2="0xFFf0f0f0"
+generate_alpha_variants "BG2" "0xFFf0f0f0"
 
 generate_alpha_variants "WHITE" "0xFF5C6166"
 generate_alpha_variants "BLACK" "0xFF1A1F29"

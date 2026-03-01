@@ -7,10 +7,16 @@ export SBAR_EVENT_DIR="$CONFIG_DIR/events"
 source "$CONFIG_DIR/core/env.sh"
 source "$CONFIG_DIR/core/init_widgets.sh"
 source "$CONFIG_DIR/core/bar_defaults.sh"
+source "$CONFIG_DIR/core/events.sh"
 source "$CONFIG_DIR/core/loader.sh"
 source "$CONFIG_DIR/core/load_widgets.sh"
 source "$CONFIG_DIR/core/styles.sh"
 
 sketchybar --update
 
-source "$CONFIG_DIR/core/events.sh"
+# Subscribe to system_woke after --update to avoid triggering reload during init
+sketchybar --add item system_woke left \
+  --set system_woke \
+  drawing=off \
+  script="$SBAR_EVENT_DIR/system_woke.sh" \
+  --subscribe system_woke system_woke

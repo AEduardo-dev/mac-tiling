@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+FRONT_APP_EVENTS="front_app_switched"
+if command -v yabai >/dev/null 2>&1; then
+  FRONT_APP_EVENTS="$FRONT_APP_EVENTS yabai_window_focus"
+fi
+
 sketchybar --add item front_app.icon center \
   --set front_app.icon \
   icon="" \
@@ -13,4 +18,4 @@ sketchybar --add item front_app.name center \
   label.color="$COLOR_BLACK" \
   label.padding_right="$SBAR_ITEM_LABEL_PADDING_RIGHT" \
   script="$SBAR_PLUGIN_DIR/front_app.sh" \
-  --subscribe front_app.name front_app_switched yabai_window_focus
+  --subscribe front_app.name $FRONT_APP_EVENTS
