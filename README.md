@@ -105,6 +105,42 @@ Add this flake as an input in your `flake.nix`:
 }
 ```
 
+### Workspace-monitor assignment & app placement
+
+```nix
+{
+  modules.tiling.aerospace.workspaces = {
+    "1" = {
+      monitor = "main";
+      apps = [
+        { id = "com.mitchellh.ghostty"; }
+        { name = "Terminal"; }
+      ];
+    };
+    "2" = {
+      monitor = "secondary";
+      apps = [
+        { id = "com.google.Chrome"; }
+      ];
+    };
+    "3" = {
+      monitor = [ "secondary" 2 ];  # fallback: try "secondary", then monitor 2
+      apps = [
+        { id = "com.microsoft.VSCode"; }
+      ];
+    };
+  };
+}
+```
+
+This generates:
+- **Workspace-to-monitor assignment** — workspaces 1, 2, 3 are pinned to their monitors
+- **Auto-placement** — when Chrome opens, it moves to workspace 2 (`on-window-detected`)
+- **Auto-launch** — all listed apps start on AeroSpace startup (`after-startup-command`)
+- **Keybindings** — `alt-1`/`alt-shift-1` through `alt-3`/`alt-shift-3` are auto-generated
+
+When no workspaces are defined, 5 default workspaces (1–5) with keybindings are created.
+
 ### Full example with all options
 
 ```nix
@@ -116,6 +152,14 @@ Add this flake as an input in your `flake.nix`:
       gaps = {
         inner = { horizontal = 8; vertical = 8; };
         outer = { top = 40; bottom = 8; left = 8; right = 8; };
+      };
+
+      workspaces = {
+        "1" = { monitor = "main"; apps = [{ id = "com.mitchellh.ghostty"; }]; };
+        "2" = { monitor = "main"; apps = [{ id = "com.google.Chrome"; }]; };
+        "3" = { monitor = "secondary"; apps = [{ id = "com.microsoft.VSCode"; }]; };
+        "4" = { monitor = "secondary"; };
+        "5" = {};
       };
     };
 
@@ -157,6 +201,11 @@ Add this flake as an input in your `flake.nix`:
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
+| `modules.tiling.aerospace.workspaces` | attrsOf submodule | `{}` | Workspace definitions (monitor + apps). When empty, defaults to 5 workspaces (1–5) |
+| `modules.tiling.aerospace.workspaces.<name>.monitor` | null or str or int or list | `null` | Monitor to force-assign workspace to (pattern, index, or fallback list) |
+| `modules.tiling.aerospace.workspaces.<name>.apps` | list of submodule | `[]` | Apps to auto-place and auto-launch in this workspace |
+| `modules.tiling.aerospace.workspaces.<name>.apps.*.id` | null or str | `null` | App bundle ID (e.g., `com.google.Chrome`) |
+| `modules.tiling.aerospace.workspaces.<name>.apps.*.name` | null or str | `null` | App name regex substring (e.g., `Chrome`) |
 | `modules.tiling.sketchybar.enable` | bool | `modules.tiling.enable` | Enable SketchyBar |
 | `modules.tiling.sketchybar.theme` | enum | `"onedark"` | Color theme |
 | `modules.tiling.sketchybar.barStyle` | enum | `"block"` | Bar style (`block` or `compact`) |
